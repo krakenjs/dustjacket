@@ -1,0 +1,25 @@
+{
+  "name": "dustjacket",
+  "version": "1.0.0",
+  "description": "Add loader middleware to the dustjs template engine",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/aredridel/dustjacket.git"
+  },
+  "keywords": [
+    "dustjs"
+  ],
+  "author": "Aria Stewart <ariastewart@paypal.com>",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/aredridel/dustjacket/issues"
+  },
+  "homepage": "https://github.com/aredridel/dustjacket",
+  "devDependencies": {
+    "tape": "^3.0.3"
+  }
+}

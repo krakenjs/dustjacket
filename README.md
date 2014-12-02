@@ -19,3 +19,14 @@ dust.addLoadMiddleware(function (name, cb) {
     // cb(null, data) return data to renderer, stopping the chain
 });
 ```
+
+In the browser:
+
+```
+<script src='dustjs-linkedin.js'></script>
+<script src='dustjacket/index.js'></script>
+
+dust.addLoadMiddleware(...)
+```
+
+The module auto-registers if not loaded inside a commonjs module system.

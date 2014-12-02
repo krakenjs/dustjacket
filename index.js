@@ -25,7 +25,7 @@
                     return cb(new Error("No template found named '" + name + "'"));
                 }
 
-                handler(name, function (err, data) {
+                handler.call(dust, name, function (err, data) {
                     if (err) {
                         return cb(err);
                     } else if (data) {

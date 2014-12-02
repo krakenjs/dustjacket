@@ -69,3 +69,20 @@ test('middleware can return data', function (t) {
         t.end();
     });
 });
+
+test('middleware are called with correct context', function (t) {
+    var dust = freshy('dustjs-linkedin');
+
+    dustjacket.registerWith(dust);
+
+    t.plan(1);
+
+    dust.addLoadMiddleware(function (name, cb) {
+        t.equal(this, dust);
+        cb();
+    });
+
+    dust.render('test', {}, function (err, out) {
+        t.end();
+    });
+});

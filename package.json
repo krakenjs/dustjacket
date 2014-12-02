@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/aredridel/dustjacket",
   "devDependencies": {
+    "dustjs-linkedin": "^2.5.1",
+    "freshy": "0.0.2",
     "tape": "^3.0.3"
   }
 }

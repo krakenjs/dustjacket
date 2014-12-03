@@ -104,3 +104,18 @@ test('middleware with three parameters get a context argument', function (t) {
         t.end();
     });
 });
+
+test('registering twice should noop', function (t) {
+    var dust = freshy('dustjs-linkedin');
+
+    dustjacket.registerWith(dust);
+    
+    var first = dust.addLoadMiddleware;
+
+    dustjacket.registerWith(dust);
+
+    t.ok(first == dust.addLoadMiddleware);
+
+    t.end();
+
+});

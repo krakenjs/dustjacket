@@ -86,3 +86,21 @@ test('middleware are called with correct context', function (t) {
         t.end();
     });
 });
+
+test('middleware with three parameters get a context argument', function (t) {
+    var dust = freshy('dustjs-linkedin');
+
+    dustjacket.registerWith(dust);
+
+    t.plan(2);
+
+    dust.addLoadMiddleware(function (name, context, cb) {
+        t.ok(context);
+        t.ok(name);
+        cb();
+    });
+
+    dust.render('test', {}, function (err, out) {
+        t.end();
+    });
+});

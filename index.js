@@ -15,7 +15,12 @@
 
         dust.onLoad = load;
 
-        function load(name, cb) {
+        function load(name, context, cb) {
+            if (typeof context == 'function' && !cb) {
+                cb = context;
+                context = null;
+            }
+
             var toRun = middlewares.slice();
             if (originalLoader) toRun.push(originalLoader);
 
@@ -25,7 +30,7 @@
                     return cb(new Error("No template found named '" + name + "'"));
                 }
 
-                handler.call(dust, name, function (err, data) {
+                var args = [name, function (err, data) {
                     if (err) {
                         return cb(err);
                     } else if (data) {
@@ -33,7 +38,13 @@
                     } else {
                         runChain();
                     }
-                });
+                }];
+
+                if (handler.length == 3) {
+                    args = args.splice(1, 0, context);
+                }
+
+                handler.apply(dust, args);
             }
 
             runChain();

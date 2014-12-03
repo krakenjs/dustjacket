@@ -41,7 +41,7 @@
                 }];
 
                 if (handler.length == 3) {
-                    args = args.splice(1, 0, context);
+                    args = args.splice(1, 0, context || {});
                 }
 
                 handler.apply(dust, args);

@@ -109,7 +109,7 @@ test('registering twice should noop', function (t) {
     var dust = freshy('dustjs-linkedin');
 
     dustjacket.registerWith(dust);
-    
+
     var first = dust.addLoadMiddleware;
 
     dustjacket.registerWith(dust);

@@ -66,6 +66,7 @@
                             data(chunk, context).end();
                         } else if (typeof data == 'object') {
                             if (data.name) name = data.name;
+                            if (data.context) context = context.push(data.context);
                             runChain(chunk);
                         } else {
                             dust.loadSource(dust.compile(data, name))(chunk, context).end();

@@ -4,50 +4,76 @@
     function registerWith(dust) {
         if (dust.addLoadMiddleware) return;
 
-        var originalLoader = dust.onLoad;
-        var middlewares = [];
+        var middlewares = [
+            defaultCacheLoader
+        ];
 
         dust.addLoadMiddleware = addLoadMiddleware;
+        dust.clearMiddleware = clearMiddleware;
 
         function addLoadMiddleware(middleware) {
             middlewares.push(middleware);
         }
 
-        dust.onLoad = load;
+        function clearMiddleware() {
+            middlewares = [];
+        }
 
-        function load(name, context, cb) {
-            if (typeof context == 'function' && !cb) {
-                cb = context;
-                context = null;
+        function defaultCacheLoader(name, context, cb) {
+            if (dust.cache[name]) {
+                cb(null, dust.cache[name]);
+            } else {
+                cb();
             }
+        }
 
+        function callLegacyOnLoad(chunk) {
+            dust.onLoad(name, function(err, src) {
+                if (err) {
+                    return chunk.setError(err);
+                }
+                dust.cache[name](chunk, context).end();
+            });
+        }
+
+        dust.load = load;
+
+        function load(name, chunk, context) {
             var toRun = middlewares.slice();
-            if (originalLoader) toRun.push(originalLoader);
 
-            function runChain() {
+            return chunk.map(function runChain(chunk) {
                 var handler = toRun.shift();
                 if (!handler) {
-                    return cb(new Error("No template found named '" + name + "'"));
+                    if (dust.onLoad) {
+                        return chunk.map(callLegacyOnLoad);
+                    } else {
+                        return chunk.setError(new Error('Template Not Found: ' + name));
+                    }
                 }
 
                 var args = [name, function (err, data) {
                     if (err) {
-                        return cb(err);
+                        return chunk.setError(err);
                     } else if (data) {
-                        return cb(null, data);
+                        if (typeof data == 'function') {
+                            data(chunk, context).end();
+                        } else if (typeof data == 'object') {
+                            if (data.name) name = data.name;
+                            runChain(chunk);
+                        } else {
+                            dust.loadSource(dust.compile(data, name))(chunk, context).end();
+                        }
                     } else {
-                        runChain();
+                        runChain(chunk);
                     }
                 }];
 
                 if (handler.length == 3) {
-                    args.splice(1, 0, context || {});
+                    args.splice(1, 0, context);
                 }
 
                 handler.apply(dust, args);
-            }
-
-            runChain();
+            });
         }
     }
 

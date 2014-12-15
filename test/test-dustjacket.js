@@ -4,10 +4,10 @@ var dustjacket = require('../');
 
 test('registration', function (t) {
     var dust = freshy('dustjs-linkedin');
-    var load = dust.onLoad;
+    var load = dust.load;
     dustjacket.registerWith(dust);
 
-    t.notEqual(load, dust.onLoad, 'loader was replaced');
+    t.notEqual(load, dust.load, 'loader was replaced');
     t.ok(dust.addLoadMiddleware, 'addLoadMiddleware method was added');
 
     t.end();

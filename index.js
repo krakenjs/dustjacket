@@ -4,7 +4,6 @@
     function registerWith(dust) {
         if (dust.addLoadMiddleware) return;
 
-        var originalLoader = dust.onLoad;
         var middlewares = [];
 
         dust.addLoadMiddleware = addLoadMiddleware;
@@ -13,41 +12,37 @@
             middlewares.push(middleware);
         }
 
-        dust.onLoad = load;
+        dust.load = load;
 
-        function load(name, context, cb) {
-            if (typeof context == 'function' && !cb) {
-                cb = context;
-                context = null;
-            }
-
+        function load(name, chunk, context) {
             var toRun = middlewares.slice();
-            if (originalLoader) toRun.push(originalLoader);
 
-            function runChain() {
+            return chunk.map(function runChain(chunk) {
                 var handler = toRun.shift();
                 if (!handler) {
-                    return cb(new Error("No template found named '" + name + "'"));
+                    return chunk.setError(new Error("No template found named '" + name + "'"));
                 }
 
                 var args = [name, function (err, data) {
                     if (err) {
-                        return cb(err);
+                        return chunk.setError(err);
                     } else if (data) {
-                        return cb(null, data);
+                        if (typeof data == 'function') {
+                            data(chunk, context).end();
+                        } else {
+                            dust.loadSource(dust.compile(data, name))(chunk, context).end();
+                        }
                     } else {
-                        runChain();
+                        runChain(chunk);
                     }
                 }];
 
                 if (handler.length == 3) {
-                    args.splice(1, 0, context || {});
+                    args.splice(1, 0, context);
                 }
 
                 handler.apply(dust, args);
-            }
-
-            runChain();
+            });
         }
     }
 

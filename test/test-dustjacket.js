@@ -26,7 +26,7 @@ test('middleware can pass', function (t) {
     });
 
     dust.render('test', {}, function (err, out) {
-        t.equal(err.message, "No template found named 'test'");
+        t.equal(err.message, "Template Not Found: test");
         t.notOk(out);
         t.end();
     });

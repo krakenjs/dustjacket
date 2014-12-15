@@ -27,6 +27,15 @@
             }
         }
 
+        function callLegacyOnLoad(chunk) {
+            dust.onLoad(name, function(err, src) {
+                if (err) {
+                    return chunk.setError(err);
+                }
+                dust.cache[name](chunk, context).end();
+            });
+        }
+
         dust.load = load;
 
         function load(name, chunk, context) {
@@ -35,7 +44,11 @@
             return chunk.map(function runChain(chunk) {
                 var handler = toRun.shift();
                 if (!handler) {
-                    return chunk.setError(new Error("No template found named '" + name + "'"));
+                    if (dust.onLoad) {
+                        return chunk.map(callLegacyOnLoad);
+                    } else {
+                        return chunk.setError(new Error('Template Not Found: ' + name));
+                    }
                 }
 
                 var args = [name, function (err, data) {

@@ -160,3 +160,26 @@ test('registering twice should noop', function (t) {
     t.end();
 
 });
+
+test('default middleware caches', function (t) {
+    var dust = freshy('dustjs-linkedin');
+
+    dustjacket.registerWith(dust);
+
+    t.plan(2);
+
+    var called = 0;
+
+    dust.addLoadMiddleware(function (name, context, cb) {
+        called += 1;
+        cb(null, "Hi");
+    });
+
+    dust.render('test', {}, function (err, out) {
+        t.equal(called, 1, "Called once already");
+        dust.render('test', {}, function (err, out) {
+            t.equal(called, 1, "Called just once");
+            t.end();
+        });
+    });
+});

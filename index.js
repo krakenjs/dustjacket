@@ -4,7 +4,9 @@
     function registerWith(dust) {
         if (dust.addLoadMiddleware) return;
 
-        var middlewares = [];
+        var middlewares = [
+            defaultCacheLoader
+        ];
 
         dust.addLoadMiddleware = addLoadMiddleware;
         dust.clearMiddleware = clearMiddleware;
@@ -15,6 +17,14 @@
 
         function clearMiddleware() {
             middlewares = [];
+        }
+
+        function defaultCacheLoader(name, context, cb) {
+            if (dust.cache[name]) {
+                cb(null, dust.cache[name]);
+            } else {
+                cb();
+            }
         }
 
         dust.load = load;

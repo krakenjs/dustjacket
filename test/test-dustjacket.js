@@ -105,6 +105,27 @@ test('middleware with three parameters get a context argument', function (t) {
     });
 });
 
+test('middleware can change loaded template name', function (t) {
+    var dust = freshy('dustjs-linkedin');
+
+    dustjacket.registerWith(dust);
+
+    t.plan(1);
+
+    dust.addLoadMiddleware(function (name, context, cb) {
+        cb(null, {name: 'test-changed'});
+    });
+
+    dust.addLoadMiddleware(function (name, context, cb) {
+        t.equal(name, 'test-changed');
+        cb();
+    });
+
+    dust.render('test', {}, function (err, out) {
+        t.end();
+    });
+});
+
 test('middleware can be cleared', function (t) {
     var dust = freshy('dustjs-linkedin');
 

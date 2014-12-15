@@ -34,6 +34,9 @@
                     } else if (data) {
                         if (typeof data == 'function') {
                             data(chunk, context).end();
+                        } else if (typeof data == 'object') {
+                            if (data.name) name = data.name;
+                            runChain(chunk);
                         } else {
                             dust.loadSource(dust.compile(data, name))(chunk, context).end();
                         }

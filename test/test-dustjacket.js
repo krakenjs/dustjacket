@@ -105,6 +105,26 @@ test('middleware with three parameters get a context argument', function (t) {
     });
 });
 
+test('middleware can be cleared', function (t) {
+    var dust = freshy('dustjs-linkedin');
+
+    dustjacket.registerWith(dust);
+
+    t.plan(1);
+
+    var called = false;
+    dust.addLoadMiddleware(function (name, context, cb) {
+        called = true;
+        cb();
+    });
+
+    dust.clearMiddleware();
+
+    dust.render('test', {}, function (err, out) {
+        t.ok(!called, "middleware was not called");
+        t.end();
+    });
+});
 test('registering twice should noop', function (t) {
     var dust = freshy('dustjs-linkedin');
 

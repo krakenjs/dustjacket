@@ -7,9 +7,14 @@
         var middlewares = [];
 
         dust.addLoadMiddleware = addLoadMiddleware;
+        dust.clearMiddleware = clearMiddleware;
 
         function addLoadMiddleware(middleware) {
             middlewares.push(middleware);
+        }
+
+        function clearMiddleware() {
+            middlewares = [];
         }
 
         dust.load = load;

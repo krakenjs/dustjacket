@@ -27,13 +27,20 @@
             }
         }
 
-        function callLegacyOnLoad(chunk) {
-            dust.onLoad(name, function(err, src) {
-                if (err) {
-                    return chunk.setError(err);
+        function callLegacyOnLoad(context) {
+            return function (chunk) {
+                var args = [context.templateName];
+                if (dust.onLoad.length == 3) {
+                    args.push(context);
                 }
-                dust.cache[name](chunk, context).end();
-            });
+                args.push(function(err, src) {
+                    if (err) {
+                        return chunk.setError(err);
+                    }
+                    dust.cache[context.templateName](chunk, context).end();
+                });
+                dust.onLoad.apply(dust, args);
+            };
         }
 
         dust.load = load;
@@ -45,7 +52,7 @@
                 var handler = toRun.shift();
                 if (!handler) {
                     if (dust.onLoad) {
-                        return chunk.map(callLegacyOnLoad);
+                        return chunk.map(callLegacyOnLoad(context));
                     } else {
                         return chunk.setError(new Error('Template Not Found: ' + name));
                     }

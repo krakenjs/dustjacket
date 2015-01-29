@@ -183,3 +183,23 @@ test('default middleware caches', function (t) {
         });
     });
 });
+
+test('legacy onLoad is called', function (t) {
+    var dust = freshy('dustjs-linkedin');
+
+    dustjacket.registerWith(dust);
+
+    t.plan(3);
+
+    dust.onLoad = function (name, context, cb) {
+        t.ok(context, 'context is provided');
+        t.ok(name, 'template name is provided');
+        t.equal(context.templateName, name, 'template name is the same as the context one');
+
+        cb(null, "");
+    };
+
+    dust.render('test', {}, function (err, out) {
+        t.end();
+    });
+});

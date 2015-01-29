@@ -1,6 +1,6 @@
 {
   "name": "dustjacket",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Add loader middleware to the dustjs template engine",
   "main": "index.js",
   "scripts": {

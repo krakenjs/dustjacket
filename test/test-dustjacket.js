@@ -203,3 +203,28 @@ test('legacy onLoad is called', function (t) {
         t.end();
     });
 });
+
+test('adding middleware first go first', function (t) {
+    var dust = freshy('dustjs-linkedin');
+
+    dustjacket.registerWith(dust);
+
+    t.plan(2);
+
+    var called = [];
+    dust.addLoadMiddleware(function (name, context, cb) {
+        called.push('after');
+        cb();
+    });
+
+    dust.addLoadMiddlewareFirst(function (name, context, cb) {
+        called.push('first');
+        cb();
+    });
+
+    dust.render('test', {}, function (err, out) {
+        t.equal(called[0], 'first', 'first was called first');
+        t.equal(called[1], 'after', 'after was called after');
+        t.end();
+    });
+});

@@ -9,10 +9,15 @@
         ];
 
         dust.addLoadMiddleware = addLoadMiddleware;
+        dust.addLoadMiddlewareFirst = addLoadMiddlewareFirst;
         dust.clearMiddleware = clearMiddleware;
 
         function addLoadMiddleware(middleware) {
             middlewares.push(middleware);
+        }
+
+        function addLoadMiddlewareFirst(middleware) {
+            middlewares.unshift(middleware);
         }
 
         function clearMiddleware() {

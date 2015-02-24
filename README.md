@@ -33,3 +33,21 @@ dust.addLoadMiddleware(...)
 ```
 
 The module auto-registers if not loaded inside a commonjs module system.
+
+Loaders
+-------
+
+A loader can cause several effects in the process depending on what it calls back with.
+
+* an error will trigger an error in the render
+* a string will cause that string to be compiled as a dust template and cached
+* a function will be called with the chunk and context as normal for a dust chunk handler, and no caching will be performed.
+* an object with a `name` property will update the template name being loaded, and pass control on to the next handler
+* calling back with no data at all will pass on to the next handler.
+
+If control is passed past the last handler, the default dust `onLoad` behavior will be invoked, and a missing template error will be triggered if that fails.
+
+Loader Arity
+------------
+
+Loaders with arity 2 will be called with `(name, callback)`; loaders with arity 3 will be called with `(name, context, callback)`.

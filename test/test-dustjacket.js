@@ -75,14 +75,16 @@ test('middleware are called with correct context', function (t) {
 
     dustjacket.registerWith(dust);
 
-    t.plan(1);
+    t.plan(3);
 
     dust.addLoadMiddleware(function (name, cb) {
         t.equal(this, dust);
-        cb();
+        cb(null, '');
     });
 
     dust.render('test', {}, function (err, out) {
+        t.error(err);
+        t.equal(out, '');
         t.end();
     });
 });

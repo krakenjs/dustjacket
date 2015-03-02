@@ -61,7 +61,7 @@
                 var args = [name, function (err, data) {
                     if (err) {
                         return chunk.setError(err);
-                    } else if (data) {
+                    } else if (data != null) {
                         if (typeof data == 'function') {
                             data(chunk, context).end();
                         } else if (typeof data == 'object') {

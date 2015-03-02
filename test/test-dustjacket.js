@@ -116,7 +116,7 @@ test('middleware can change loaded template name', function (t) {
 
     dustjacket.registerWith(dust);
 
-    t.plan(1);
+    t.plan(3);
 
     dust.addLoadMiddleware(function (name, context, cb) {
         cb(null, {name: 'test-changed'});
@@ -124,10 +124,12 @@ test('middleware can change loaded template name', function (t) {
 
     dust.addLoadMiddleware(function (name, context, cb) {
         t.equal(name, 'test-changed');
-        cb();
+        cb(null, '');
     });
 
     dust.render('test', {}, function (err, out) {
+        t.error(err);
+        t.equal(out, '');
         t.end();
     });
 });

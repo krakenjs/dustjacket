@@ -1,3 +1,5 @@
+"use strict";
+
 var test = require('tape');
 var freshy = require('freshy').freshy;
 var dustjacket = require('../');

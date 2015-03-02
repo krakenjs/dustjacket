@@ -176,7 +176,7 @@ test('default middleware caches', function (t) {
 
     dustjacket.registerWith(dust);
 
-    t.plan(2);
+    t.plan(6);
 
     var called = 0;
 
@@ -186,9 +186,13 @@ test('default middleware caches', function (t) {
     });
 
     dust.render('test', {}, function (err, out) {
+        t.error(err);
         t.equal(called, 1, "Called once already");
+        t.equal(out, 'Hi');
         dust.render('test', {}, function (err, out) {
+            t.error(err);
             t.equal(called, 1, "Called just once");
+            t.equal(out, 'Hi');
             t.end();
         });
     });

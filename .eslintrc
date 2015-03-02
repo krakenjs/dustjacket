@@ -4,6 +4,7 @@
     },
     "rules": {
         "eqeqeq": false,
+        "no-shadow": false,
         "no-use-before-define": false
     }
 }

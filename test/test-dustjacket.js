@@ -203,7 +203,7 @@ test('legacy onLoad is called', function (t) {
 
     dustjacket.registerWith(dust);
 
-    t.plan(3);
+    t.plan(5);
 
     dust.onLoad = function (name, context, cb) {
         t.ok(context, 'context is provided');
@@ -214,6 +214,8 @@ test('legacy onLoad is called', function (t) {
     };
 
     dust.render('test', {}, function (err, out) {
+        t.error(err);
+        t.equal(out, '');
         t.end();
     });
 });

@@ -139,7 +139,7 @@ test('middleware can be cleared', function (t) {
 
     dustjacket.registerWith(dust);
 
-    t.plan(1);
+    t.plan(3);
 
     var called = false;
     dust.addLoadMiddleware(function (name, context, cb) {
@@ -150,7 +150,9 @@ test('middleware can be cleared', function (t) {
     dust.clearMiddleware();
 
     dust.render('test', {}, function (err, out) {
+        t.ok(err);
         t.ok(!called, "middleware was not called");
+        t.notOk(out);
         t.end();
     });
 });

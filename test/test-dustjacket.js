@@ -225,7 +225,7 @@ test('a loader should be able to change the name for future loaders', function (
 
     dustjacket.registerWith(dust);
 
-    t.plan(2);
+    t.plan(4);
 
     dust.addLoadMiddleware(function (name, context, cb) {
         cb(null, {name: 'new', context: { 'new': 'context' }});
@@ -238,6 +238,8 @@ test('a loader should be able to change the name for future loaders', function (
     });
 
     dust.render('test', {}, function (err, out) {
+        t.error(err);
+        t.equal(out, 'done');
         t.end();
     });
 

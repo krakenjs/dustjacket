@@ -203,3 +203,26 @@ test('legacy onLoad is called', function (t) {
         t.end();
     });
 });
+
+test('a loader should be able to change the name for future loaders', function (t) {
+    var dust = freshy('dustjs-linkedin');
+
+    dustjacket.registerWith(dust);
+
+    t.plan(2);
+
+    dust.addLoadMiddleware(function (name, context, cb) {
+        cb(null, {name: 'new', context: { 'new': 'context' }});
+    });
+
+    dust.addLoadMiddleware(function (name, context, cb) {
+        t.equal(name, 'new');
+        t.equal(context.get('new'), 'context');
+        cb(null, 'done');
+    });
+
+    dust.render('test', {}, function (err, out) {
+        t.end();
+    });
+
+});

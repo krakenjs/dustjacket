@@ -1,3 +1,5 @@
+"use strict";
+
 var test = require('tape');
 var freshy = require('freshy').freshy;
 var dustjacket = require('../');
@@ -75,14 +77,16 @@ test('middleware are called with correct context', function (t) {
 
     dustjacket.registerWith(dust);
 
-    t.plan(1);
+    t.plan(3);
 
     dust.addLoadMiddleware(function (name, cb) {
         t.equal(this, dust);
-        cb();
+        cb(null, '');
     });
 
     dust.render('test', {}, function (err, out) {
+        t.error(err);
+        t.equal(out, '');
         t.end();
     });
 });
@@ -92,15 +96,17 @@ test('middleware with three parameters get a context argument', function (t) {
 
     dustjacket.registerWith(dust);
 
-    t.plan(2);
+    t.plan(4);
 
     dust.addLoadMiddleware(function (name, context, cb) {
         t.ok(context);
         t.ok(name);
-        cb();
+        cb(null, '');
     });
 
     dust.render('test', {}, function (err, out) {
+        t.error(err);
+        t.equal(out, '');
         t.end();
     });
 });
@@ -110,7 +116,7 @@ test('middleware can change loaded template name', function (t) {
 
     dustjacket.registerWith(dust);
 
-    t.plan(1);
+    t.plan(3);
 
     dust.addLoadMiddleware(function (name, context, cb) {
         cb(null, {name: 'test-changed'});
@@ -118,10 +124,12 @@ test('middleware can change loaded template name', function (t) {
 
     dust.addLoadMiddleware(function (name, context, cb) {
         t.equal(name, 'test-changed');
-        cb();
+        cb(null, '');
     });
 
     dust.render('test', {}, function (err, out) {
+        t.error(err);
+        t.equal(out, '');
         t.end();
     });
 });
@@ -131,7 +139,7 @@ test('middleware can be cleared', function (t) {
 
     dustjacket.registerWith(dust);
 
-    t.plan(1);
+    t.plan(3);
 
     var called = false;
     dust.addLoadMiddleware(function (name, context, cb) {
@@ -142,7 +150,9 @@ test('middleware can be cleared', function (t) {
     dust.clearMiddleware();
 
     dust.render('test', {}, function (err, out) {
+        t.ok(err);
         t.ok(!called, "middleware was not called");
+        t.notOk(out);
         t.end();
     });
 });
@@ -166,7 +176,7 @@ test('default middleware caches', function (t) {
 
     dustjacket.registerWith(dust);
 
-    t.plan(2);
+    t.plan(6);
 
     var called = 0;
 
@@ -176,9 +186,13 @@ test('default middleware caches', function (t) {
     });
 
     dust.render('test', {}, function (err, out) {
+        t.error(err);
         t.equal(called, 1, "Called once already");
+        t.equal(out, 'Hi');
         dust.render('test', {}, function (err, out) {
+            t.error(err);
             t.equal(called, 1, "Called just once");
+            t.equal(out, 'Hi');
             t.end();
         });
     });
@@ -189,7 +203,7 @@ test('legacy onLoad is called', function (t) {
 
     dustjacket.registerWith(dust);
 
-    t.plan(3);
+    t.plan(5);
 
     dust.onLoad = function (name, context, cb) {
         t.ok(context, 'context is provided');
@@ -200,6 +214,8 @@ test('legacy onLoad is called', function (t) {
     };
 
     dust.render('test', {}, function (err, out) {
+        t.error(err);
+        t.equal(out, '');
         t.end();
     });
 });
@@ -209,7 +225,7 @@ test('a loader should be able to change the name for future loaders', function (
 
     dustjacket.registerWith(dust);
 
-    t.plan(2);
+    t.plan(4);
 
     dust.addLoadMiddleware(function (name, context, cb) {
         cb(null, {name: 'new', context: { 'new': 'context' }});
@@ -222,6 +238,8 @@ test('a loader should be able to change the name for future loaders', function (
     });
 
     dust.render('test', {}, function (err, out) {
+        t.error(err);
+        t.equal(out, 'done');
         t.end();
     });
 

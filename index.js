@@ -27,20 +27,18 @@
             }
         }
 
-        function callLegacyOnLoad(context) {
-            return function (chunk) {
-                var args = [context.templateName];
-                if (dust.onLoad.length == 3) {
-                    args.push(context);
+        function callLegacyOnLoad(context, chunk) {
+            var args = [context.templateName];
+            if (dust.onLoad.length == 3) {
+                args.push(context);
+            }
+            args.push(function(err, src) {
+                if (err) {
+                    return chunk.setError(err);
                 }
-                args.push(function(err, src) {
-                    if (err) {
-                        return chunk.setError(err);
-                    }
-                    dust.cache[context.templateName](chunk, context).end();
-                });
-                dust.onLoad.apply(dust, args);
-            };
+                dust.loadSource(dust.compile(src, context.templateName))(chunk, context).end();
+            });
+            dust.onLoad.apply(dust, args);
         }
 
         dust.load = load;
@@ -52,7 +50,7 @@
                 var handler = toRun.shift();
                 if (!handler) {
                     if (dust.onLoad) {
-                        return chunk.map(callLegacyOnLoad(context));
+                        return callLegacyOnLoad(context, chunk);
                     } else {
                         return chunk.setError(new Error('Template Not Found: ' + name));
                     }
@@ -61,7 +59,7 @@
                 var args = [name, function (err, data) {
                     if (err) {
                         return chunk.setError(err);
-                    } else if (data) {
+                    } else if (data != null) {
                         if (typeof data == 'function') {
                             data(chunk, context).end();
                         } else if (typeof data == 'object') {

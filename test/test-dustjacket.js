@@ -94,15 +94,17 @@ test('middleware with three parameters get a context argument', function (t) {
 
     dustjacket.registerWith(dust);
 
-    t.plan(2);
+    t.plan(4);
 
     dust.addLoadMiddleware(function (name, context, cb) {
         t.ok(context);
         t.ok(name);
-        cb();
+        cb(null, '');
     });
 
     dust.render('test', {}, function (err, out) {
+        t.error(err);
+        t.equal(out, '');
         t.end();
     });
 });

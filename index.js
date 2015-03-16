@@ -36,7 +36,8 @@
                 if (err) {
                     return chunk.setError(err);
                 }
-                dust.loadSource(dust.compile(src, context.templateName))(chunk, context).end();
+                dust.loadSource(dust.compile(src, context.templateName));
+                dust.cache[context.templateName](chunk, context).end();
             });
             dust.onLoad.apply(dust, args);
         }
@@ -61,16 +62,17 @@
                         return chunk.setError(err);
                     } else if (data != null) {
                         if (typeof data == 'function') {
-                            data(chunk, context).end();
+                            return data(chunk, context).end();
                         } else if (typeof data == 'object') {
                             if (data.name) name = data.name;
                             if (data.context) context = context.push(data.context);
-                            runChain(chunk);
+                            return runChain(chunk);
                         } else {
-                            dust.loadSource(dust.compile(data, name))(chunk, context).end();
+                            dust.loadSource(dust.compile(data, name));
+                            return dust.cache[name](chunk, context).end();
                         }
                     } else {
-                        runChain(chunk);
+                        return runChain(chunk);
                     }
                 }];
 
@@ -78,7 +80,9 @@
                     args.splice(1, 0, context);
                 }
 
-                handler.apply(dust, args);
+                dust.nextTick(function () {
+                    handler.apply(dust, args);
+                });
             });
         }
     }

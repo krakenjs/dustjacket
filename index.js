@@ -80,9 +80,7 @@
                     args.splice(1, 0, context);
                 }
 
-                dust.nextTick(function () {
-                    handler.apply(dust, args);
-                });
+                handler.apply(dust, args);
             });
         }
     }

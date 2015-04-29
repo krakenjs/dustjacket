@@ -4,6 +4,10 @@
     function registerWith(dust) {
         if (dust.addLoadMiddleware) return;
 
+        if (!dust.load) {
+            throw new Error("dustjs-linkedin is not a compatible version; version 2.7.0 changed the API removing dust.load. Please use dustjs-linkedin@~2.6 until new integration points are created.");
+        }
+
         var middlewares = [
             defaultCacheLoader
         ];
